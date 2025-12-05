@@ -6,6 +6,9 @@
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
+// 🔁 Mets ici le modèle Groq que tu veux utiliser (et qui est supporté)
+const GROQ_MODEL = "llama-3.1-8b-instant"; // adapte si tu en choisis un autre dans la console Groq
+
 // Vérifier que la clé existe
 if (!GROQ_API_KEY) {
   console.warn("⚠️ Aucune clé GROQ détectée. IA désactivée.");
@@ -46,7 +49,7 @@ Réponds de manière courte et naturelle, avec humour léger.`;
         Authorization: `Bearer ${GROQ_API_KEY}`
       },
       body: JSON.stringify({
-        model: "llama3-8b-8192",
+        model: GROQ_MODEL,
         messages,
         temperature: 0.9,
         max_tokens: 180
@@ -54,17 +57,20 @@ Réponds de manière courte et naturelle, avec humour léger.`;
     });
 
     if (!res.ok) {
-      throw new Error("Groq API error: " + (await res.text()));
+      // On remonte un message plus lisible dans la console
+      const errorText = await res.text();
+      throw new Error(`Groq API error (${res.status}): ${errorText}`);
     }
 
     const data = await res.json();
-    const text = data.choices?.[0]?.message?.content?.trim() ?? "Erreur de génération.";
+    const text =
+      data.choices?.[0]?.message?.content?.trim() ??
+      "Erreur de génération.";
 
     return {
       text,
       expression: "thinking"
     };
-
   } catch (err) {
     console.error("❌ Groq generation error:", err);
     throw err;
