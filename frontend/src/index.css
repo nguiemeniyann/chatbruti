@@ -1,0 +1,374 @@
+@import "tailwindcss";
+
+/* Police pixel art */
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+/* =========================
+   PALETTE & VARIABLES
+   ========================= */
+
+:root {
+  /* Palette principale (3–4 couleurs max) */
+  --bg-primary: #0b1020;       /* Fond global très sombre */
+  --bg-secondary: #111729;     /* Panneaux / cartes */
+  --accent: #ff6f61;           /* Coral fun / CTA */
+  --accent-soft: #ffb3aa;      /* Coral clair */
+  --text-primary: #fdfdfd;     /* Texte principal */
+  --text-muted: #a0a7c2;       /* Texte secondaire */
+  --border-strong: #ffffff;    /* Bordures pixel */
+  --pixel-shadow: #000000;     /* Ombre */
+  --surface: #151b30;          /* Surfaces chat / cards */
+}
+
+.light {
+  --bg-primary: #fdf8f6;
+  --bg-secondary: #ffe1dc;
+  --accent: #ff6f61;
+  --accent-soft: #ffb3aa;
+  --text-primary: #1f1723;
+  --text-muted: #6e4f5a;
+  --border-strong: #1f1723;
+  --pixel-shadow: #000000;
+  --surface: #ffffff;
+}
+
+/* =========================
+   RESET GLOBAL
+   ========================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Press Start 2P", monospace;
+  -webkit-font-smoothing: none;
+  image-rendering: pixelated;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 13px;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* =========================
+   BACKGROUND & LAYOUT
+   ========================= */
+
+/* Fond global façon écran rétro */
+.app-bg {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 0 0, rgba(255, 111, 97, 0.12), transparent 55%),
+    radial-gradient(circle at 100% 100%, rgba(255, 179, 170, 0.18), transparent 50%),
+    linear-gradient(180deg, var(--bg-primary), #050712 60%, #020308 100%);
+}
+
+/* Conteneur principal style “console” */
+.app-shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* Panneaux rétro */
+.panel {
+  background-color: var(--surface);
+  border-radius: 0;
+  border: 4px solid var(--border-strong);
+  box-shadow:
+    0 0 0 2px var(--bg-primary),
+    6px 6px 0 0 var(--pixel-shadow),
+    6px 6px 0 2px var(--bg-primary);
+}
+
+/* =========================
+   HEADER / BRANDING
+   ========================= */
+
+.app-header {
+  border-bottom: 4px solid var(--border-strong);
+  margin-bottom: 1.5rem;
+}
+
+.app-header-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Ligne du haut (auth, actions) */
+.app-header-top {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+/* Bloc logo + titre */
+.app-header-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+/* Logo dans un cadre pixel */
+.logo-frame {
+  width: 5.5rem;
+  height: 5.5rem;
+  background-color: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+  border: 4px solid var(--border-strong);
+  box-shadow:
+    0 0 0 2px var(--bg-primary),
+    5px 5px 0 0 var(--pixel-shadow),
+    5px 5px 0 2px var(--bg-primary);
+}
+
+.logo-frame img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+}
+
+/* Titre principal */
+.app-title {
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 8px rgba(255, 111, 97, 0.7),
+    0 0 18px rgba(255, 111, 97, 0.4);
+}
+
+/* Sous-titre */
+.app-subtitle {
+  font-size: 10px;
+  color: var(--accent-soft);
+}
+
+/* Badge Nuit de l’Info */
+.app-badge {
+  display: inline-block;
+  padding: 0.75rem 1.2rem;
+  background-color: var(--accent);
+  color: #130b0b;
+  border: 4px solid var(--border-strong);
+  box-shadow:
+    0 0 0 2px var(--bg-primary),
+    4px 4px 0 0 var(--pixel-shadow),
+    4px 4px 0 2px var(--bg-primary);
+  font-size: 9px;
+}
+
+/* =========================
+   BOUTONS PIXEL
+   ========================= */
+
+.pixel-button {
+  border: 4px solid var(--border-strong);
+  box-shadow:
+    0 0 0 2px var(--bg-primary),
+    5px 5px 0 0 var(--pixel-shadow),
+    5px 5px 0 2px var(--bg-primary);
+  transition: all 0.08s ease-out;
+  font-family: "Press Start 2P", monospace;
+  text-transform: uppercase;
+  background-color: var(--accent);
+  color: #1f1010;
+  font-size: 11px;
+  padding: 0.75rem 1.3rem;
+  cursor: pointer;
+}
+
+.pixel-button:hover {
+  transform: translate(2px, 2px);
+  box-shadow:
+    0 0 0 2px var(--bg-primary),
+    3px 3px 0 0 var(--pixel-shadow),
+    3px 3px 0 2px var(--bg-primary);
+  filter: brightness(1.05);
+}
+
+.pixel-button:active {
+  transform: translate(5px, 5px);
+  box-shadow: 0 0 0 2px var(--bg-primary);
+}
+
+/* Variante bouton “neutre” */
+.pixel-button-ghost {
+  background-color: var(--bg-secondary);
+  color: var(--accent-soft);
+}
+
+/* =========================
+   INPUTS & FORMULAIRES
+   ========================= */
+
+.pixel-input {
+  border: 4px solid var(--border-strong);
+  box-shadow:
+    inset 3px 3px 0 #000000,
+    inset -3px -3px 0 rgba(255, 255, 255, 0.08);
+  font-family: "Press Start 2P", monospace;
+  font-size: 11px;
+  padding: 0.85rem;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  width: 100%;
+}
+
+.pixel-input::placeholder {
+  color: var(--text-muted);
+}
+
+.pixel-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow:
+    inset 3px 3px 0 #000000,
+    inset -3px -3px 0 rgba(255, 255, 255, 0.12),
+    0 0 16px rgba(255, 111, 97, 0.7);
+}
+
+/* =========================
+   CHAT / BUBBLES
+   ========================= */
+
+.chat-panel {
+  background-color: var(--surface);
+  border-radius: 0;
+  border: 4px solid var(--border-strong);
+  box-shadow:
+    0 0 0 2px var(--bg-primary),
+    6px 6px 0 0 var(--pixel-shadow),
+    6px 6px 0 2px var(--bg-primary);
+  overflow: hidden;
+}
+
+/* Zone messages */
+.chat-messages {
+  background: radial-gradient(circle at top, rgba(255, 111, 97, 0.14), transparent 55%),
+    #050814;
+}
+
+/* Bulles */
+.bubble-base {
+  border: 4px solid var(--border-strong);
+  padding: 0.8rem 1rem;
+  font-family: "Press Start 2P", monospace;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+/* Bulle bot */
+.bubble-bot {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* Bulle user */
+.bubble-user {
+  background-color: var(--accent);
+  color: #210d0d;
+}
+
+/* Tag nom (TOI / CHAT’BRUTI) */
+.bubble-label {
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+}
+
+/* Horodatage */
+.bubble-time {
+  font-size: 9px;
+  color: var(--text-muted);
+}
+
+/* =========================
+   AVATAR / ANIM
+   ========================= */
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-8px) rotate(2deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-8px) rotate(-2deg);
+  }
+}
+
+/* Curseur typewriter */
+.pixel-blink {
+  animation: pixel-blink 1s steps(2, start) infinite;
+}
+
+@keyframes pixel-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* =========================
+   SCROLLBAR PIXEL
+   ========================= */
+
+::-webkit-scrollbar {
+  width: 14px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-strong);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border: 2px solid var(--border-strong);
+  box-shadow: inset 0 0 0 2px var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  filter: brightness(1.1);
+}
+
+/* =========================
+   TEXTE & GLOW
+   ========================= */
+
+.pixel-text {
+  letter-spacing: 2px;
+}
+
+.text-muted-pixel {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.text-glow-accent {
+  text-shadow:
+    0 0 6px rgba(255, 111, 97, 0.9),
+    0 0 14px rgba(255, 111, 97, 0.7);
+}

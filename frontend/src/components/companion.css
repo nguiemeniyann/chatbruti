@@ -1,0 +1,55 @@
+.companion-container {
+  position: absolute;
+  right: 15px;
+  bottom: 140px;
+  z-index: 50;
+}
+
+.float-bot {
+  animation: botFloat 3s ease-in-out infinite;
+}
+
+@keyframes botFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.wiggle-bot {
+  animation: botWiggle 0.4s infinite;
+}
+
+@keyframes botWiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(6deg); }
+  75% { transform: rotate(-6deg); }
+}
+
+.shake-bot {
+  animation: botShake 0.25s infinite;
+}
+
+@keyframes botShake {
+  0% { transform: translateX(0px); }
+  25% { transform: translateX(4px); }
+  75% { transform: translateX(-4px); }
+}
+
+.thinking-bot {
+  animation: botThinking 1s infinite ease-in-out;
+}
+
+@keyframes botThinking {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.bounce-bot {
+  animation: botBounce 0.6s infinite ease-out;
+}
+
+@keyframes botBounce {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0); }
+}
