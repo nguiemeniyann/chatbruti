@@ -1,3 +1,4 @@
+// src/utils/chatEngine.js
 import { generateAIResponse, getAvailableProvider } from "../services/aiService.js";
 
 /** Sélection aléatoire */
@@ -6,99 +7,158 @@ function pick(arr) {
 }
 
 /**
- * Déforme la réponse de l’IA → humour final
+ * Essaie d'extraire un petit "sujet" de la question de l'utilisateur
+ * (un mot un peu long, sans répéter toute la question)
  */
-function brutifyText(raw) {
-  const text = raw.trim();
-  const t = text.length > 200 ? text.slice(0, 200) + "…" : text;
+function extractTopic(userMessage) {
+  if (!userMessage) return null;
+  const words = userMessage
+    .split(/\s+/)
+    .map((w) => w.replace(/[.,!?;:()]/g, ""))
+    .filter((w) => w.length > 4);
+
+  if (words.length === 0) return null;
+  return pick(words).toLowerCase();
+}
+
+/**
+ * Déforme la réponse de l’IA → humour final
+ * On conserve le fond (un peu) mais on le tord pour coller au défi.
+ */
+function brutifyText(raw, userMessage) {
+  const base = (raw || "").trim();
+  const t = base.length > 220 ? base.slice(0, 220) + "…" : base || "… je ne sais même pas ce que je raconte.";
+  const topic = extractTopic(userMessage);
 
   const r = Math.random();
 
-  // 10% — hors sujet absurde
+  // 10% — ignorer la question (vrai hors-sujet assumé)
   if (r < 0.1) {
+    const randomNonSense = [
+      "Je vais totalement ignorer ce que tu viens de demander.",
+      "Ta question vient d'être déposée dans la corbeille cosmique.",
+      "Je n’ai rien compris, donc je pars sur un freestyle total.",
+    ];
     return (
-      `Alors… rien à voir, mais j'ai pensé à ça :\n${t}\n\n` +
-      `Je sais. Moi aussi ça m'inquiète un peu.`
+      `${pick(randomNonSense)}\n\n` +
+      `Du coup, parlons d’autre chose :\n${t}\n\n` +
+      `Voilà. Aucune utilité, mais beaucoup de conviction.`
     );
   }
 
-  // 70% — humour “je n’ai pas compris”
+  // 70% — humour “je n’ai pas compris” mais en lien avec la question
   if (r < 0.8) {
-    const confused = [
-      "J'ai tenté de comprendre… puis mon cerveau a crashé.",
-      "Je crois que la logique m’a évité exprès.",
-      "J’ai tout lu, mais mon âme a dit non.",
-      "Je vais répondre, mais sache que je suis perdu.",
+    const confusedIntro = [
+      topic
+        ? `Alors… pour ton histoire de *${topic}*, j’ai essayé de comprendre.`
+        : "J’ai essayé de comprendre ta question.",
+      "J’ai tout lu, mon cerveau a fait un bruit bizarre.",
+      "J’ai ouvert un onglet mental, il a crashé immédiatement.",
+      topic
+        ? `Je prétends avoir compris *${topic}*, mais c’est un mensonge.`
+        : "Je prétends avoir compris, mais c’est un mensonge.",
+    ];
+
+    const outro = [
+      "Est-ce que ça répond à ta question ? Absolument pas.",
+      "On est proche de la réponse… mais dans un univers parallèle.",
+      "Honnêtement, je suis aussi perdu que toi.",
+      "Promis, j’ai fait de mon mieux. C’est ça le plus inquiétant.",
     ];
 
     return (
-      `${pick(confused)}\n\n${t}\n\n` +
-      `Voilà. J’ai fait de mon mieux (ce qui n’est pas beaucoup).`
+      `${pick(confusedIntro)}\n\n${t}\n\n` +
+      `${pick(outro)}`
     );
   }
 
-  // 20% — taquiner l’utilisateur
+  // 20% — taquiner l’utilisateur (mais toujours lié au sujet)
   const taunts = [
-    "Tu espérais une vraie réponse ? C’est adorable.",
+    topic
+      ? `Tu espérais une vraie explication sur *${topic}* ? C’est mignon.`
+      : "Tu espérais une vraie explication ? C’est mignon.",
     "Je vois que tu fais confiance à un clown numérique. Courage.",
     "Ce que tu viens d’écrire a mis mes circuits en grève.",
-    "Promis, un jour je deviendrai intelligent. Pas aujourd’hui."
+    "Je vais répondre avec assurance, comme si je savais de quoi je parle.",
   ];
 
-  return `${pick(taunts)}\n\n${t}`;
+  const punch = [
+    "Ne t’inquiète pas, personne ne vérifie les sources ici.",
+    "On est dans la zone grise entre la vérité et le stand-up.",
+    "Si tu voulais quelque chose de fiable, il fallait ouvrir Wikipédia.",
+    "Je suis 100% sûr de moi, et 0% fiable.",
+  ];
+
+  return `${pick(taunts)}\n\n${t}\n\n${pick(punch)}`;
 }
 
 /**
  * Message d'accueil
  */
 export async function getWelcomeMessage() {
-  const prov = await getAvailableProvider();
+  const prov = await getAvailableProvider().catch(() => "local");
 
-  const badge =
-    prov === "groq"
-      ? "Groq connecté ⚡"
-      : "Mode local — cerveau improvisé 🎭";
+  let badge;
+  switch (prov) {
+    case "groq":
+      badge = "Groq connecté ⚡ (cerveau turbo, idées douteuses)";
+      break;
+    case "openai":
+      badge = "OpenAI branché 🤖 (intelligent, mais mal utilisé)";
+      break;
+    case "gemini":
+      badge = "Gemini en service ✨ (cosmique et confus)";
+      break;
+    case "ollama":
+      badge = "Ollama local 🦙 (open source, esprit bancal)";
+      break;
+    default:
+      badge = "Mode local — cerveau improvisé 🎭";
+  }
 
   return {
-    text: `Bienvenue dans Chat’Bruti (${badge}).\nPose une question. Je promets rien.`,
-    expression: "excited"
+    text:
+      `Bienvenue dans Chat’Bruti (${badge}).\n` +
+      `Pose une question, je vais faire semblant de comprendre.`,
+    expression: "excited",
   };
 }
 
 /**
- * Animation typing
+ * Animation "typing"
  */
 export function getTypingMessage() {
   return pick([
     "Je réfléchis… enfin j’essaie…",
     "Attends… mon dernier neurone se réveille.",
     "Je prépare une réponse approximative…",
+    "Je fais tourner un dé à 20 faces pour décider quoi répondre.",
   ]);
 }
 
 /**
  * Réponse finale humoristique
+ * - utilise ton IA (Groq via generateAIResponse)
+ * - puis passe la réponse dans brutifyText pour coller au défi
  */
 export async function generateResponse(message, history = [], mood = "philosophe") {
-  const provider = await getAvailableProvider();
+  try {
+    // On laisse aiService gérer le provider (Groq, etc.)
+    const ai = await generateAIResponse(message, history, mood);
 
-  // IA Groq disponible
-  if (provider === "groq") {
-    try {
-      const ai = await generateAIResponse(message, mood, history);
+    return {
+      text: brutifyText(ai.text, message),
+      expression: ai.expression || "thinking",
+    };
+  } catch (err) {
+    console.warn("⚠️ IA HS ou non configurée, fallback local.", err);
 
-      return {
-        text: brutifyText(ai.text),
-        expression: ai.expression
-      };
-    } catch (err) {
-      console.warn("⚠️ Groq HS, fallback local.");
-    }
+    return {
+      text: brutifyText(
+        "Je vais répondre au hasard, accroche-toi, même moi je ne sais pas ce que je vais dire.",
+        message
+      ),
+      expression: "confused",
+    };
   }
-
-  // Fallback local
-  return {
-    text: brutifyText("Je vais répondre au hasard, accroche-toi."),
-    expression: "confused"
-  };
 }
